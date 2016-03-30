@@ -82,10 +82,6 @@
 						<goals>
 							<goal>shade</goal>
 						</goals>
-						<configuration>
-							<shadedArtifactAttached>true</shadedArtifactAttached>
-							<shadedClassifierName>executable</shadedClassifierName>
-						</configuration>
 					</execution>
 				</executions>
 				<configuration>
@@ -95,8 +91,6 @@
 							<mainClass>com.avanza.graphite.duplicator.GraphiteDuplicator</mainClass>
 						</transformer>
 					</transformers>
-					<shadedArtifactAttached>true</shadedArtifactAttached>
-					<shadedClassifierName>executable</shadedClassifierName>
 				</configuration>
 			</plugin>
 		</plugins>
