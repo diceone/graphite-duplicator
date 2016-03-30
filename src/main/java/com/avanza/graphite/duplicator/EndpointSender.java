@@ -13,7 +13,7 @@ public class EndpointSender {
 
 	private final BlockingQueue<String> queue = new ArrayBlockingQueue<>(250000);
 	private final Endpoint endpoint;
-	private final long lastFailedEnqueueLog = Long.MIN_VALUE;
+	private long lastFailedEnqueueLog = System.nanoTime() - TimeUnit.SECONDS.toNanos(LOG_FAILED_ENQUEUES_DELAY_SECONDS);
 	private final AtomicLong numFailedEnqueuesSinceLastLog = new AtomicLong();
 
 	public EndpointSender(Endpoint endpoint) {
@@ -29,9 +29,10 @@ public class EndpointSender {
 	private void registerFailedEnqueue(String msg) {
 		numFailedEnqueuesSinceLastLog.incrementAndGet();
 		if (System.nanoTime() - lastFailedEnqueueLog > TimeUnit.SECONDS.toNanos(LOG_FAILED_ENQUEUES_DELAY_SECONDS)) {
-			log.warn("Endpoint " + endpoint + " - failed to enqueue message: " + msg + " this message was repeated (for different msgs) "
+			log.warn("Endpoint " + endpoint + " - failed to enqueue message: '" + msg + "' this message was repeated (for different msgs) "
 					+ (numFailedEnqueuesSinceLastLog.get() - 1) + " times before this log");
 			numFailedEnqueuesSinceLastLog.set(0);
+			lastFailedEnqueueLog = System.nanoTime();
 		}
 	}
 
