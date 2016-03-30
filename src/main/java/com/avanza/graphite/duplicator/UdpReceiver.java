@@ -43,6 +43,7 @@ public class UdpReceiver {
 				throw new RuntimeException(e);
 			}
 			String s = new String(receiveData, receivePacket.getOffset(), receivePacket.getLength());
+			s = s.trim();
 			packetConsumer.accept(s);
 		}
 	});

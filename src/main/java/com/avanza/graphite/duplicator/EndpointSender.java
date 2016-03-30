@@ -26,8 +26,7 @@ public class EndpointSender {
 			while (!Thread.interrupted()) {
 				try {
 					String msg = queue.take();
-					endpointConnection.send(msg);
-					System.out.println(msg);
+					endpointConnection.send(msg + "\n");
 				} catch (InterruptedException e) {
 					Thread.currentThread().interrupt();
 					break;

@@ -16,6 +16,7 @@
 package com.avanza.graphite.duplicator;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.Socket;
 
 /**
@@ -71,8 +72,9 @@ public class EndpointConnection {
 
 	private void doSend(byte[] header, String msg) {
 		try {
-			socket.getOutputStream().write(header);
-			socket.getOutputStream().write(msg.getBytes());
+			OutputStream outputStream = socket.getOutputStream();
+			outputStream.write(header);
+			outputStream.write(msg.getBytes());
 		} catch (IOException e) {
 			log.error("Exception when sending, this message: '" + msg + "', discarding:", e);
 			close();

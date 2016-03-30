@@ -50,7 +50,7 @@ public class TcpReceiver {
 	}
 
 	private Runnable acceptor = () -> {
-		while (true) {
+		while (!Thread.interrupted()) {
 			try {
 				Socket accepted = serverSocket.accept();
 				log.info("Accepted connection from " + accepted.getInetAddress() + ":" + accepted.getPort());
