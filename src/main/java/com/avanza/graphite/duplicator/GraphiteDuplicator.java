@@ -30,7 +30,12 @@ public class GraphiteDuplicator {
 		String[] stringEndpoints = Arrays.copyOfRange(args, 1, args.length);
 		List<Endpoint> endpoints = Arrays.stream(stringEndpoints).map(Endpoint::valueOf).collect(toList());
 		GraphiteDuplicatorServer duplicatorServer = new GraphiteDuplicatorServer(endpoints, port);
-		duplicatorServer.start();
+		try {
+			duplicatorServer.start();
+		} catch (Exception e) {
+			log.error("Failed to start", e);
+			System.exit(1);
+		}
 	}
 
 }

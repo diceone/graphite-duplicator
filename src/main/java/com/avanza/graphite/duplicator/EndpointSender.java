@@ -2,13 +2,19 @@ package com.avanza.graphite.duplicator;
 
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class EndpointSender {
+
+	private static final int LOG_FAILED_ENQUEUES_DELAY_SECONDS = 10;
 
 	private final Logger log = new Logger(EndpointSender.class);
 
 	private final BlockingQueue<String> queue = new ArrayBlockingQueue<>(250000);
 	private final Endpoint endpoint;
+	private final long lastFailedEnqueueLog = Long.MIN_VALUE;
+	private final AtomicLong numFailedEnqueuesSinceLastLog = new AtomicLong();
 
 	public EndpointSender(Endpoint endpoint) {
 		this.endpoint = endpoint;
@@ -16,7 +22,16 @@ public class EndpointSender {
 
 	public void enqueueMsg(String msg) {
 		if (!queue.offer(msg)) {
-			log.warn("Failed to enqueue msg '" + msg + ", queue size: " + queue.size() + ", endpoint: " + endpoint);
+			registerFailedEnqueue(msg);
+		}
+	}
+
+	private void registerFailedEnqueue(String msg) {
+		numFailedEnqueuesSinceLastLog.incrementAndGet();
+		if (System.nanoTime() - lastFailedEnqueueLog > TimeUnit.SECONDS.toNanos(LOG_FAILED_ENQUEUES_DELAY_SECONDS)) {
+			log.warn("Failed to enqueue message: " + msg + " this message was repeated (for different msgs) "
+					+ (numFailedEnqueuesSinceLastLog.get() - 1) + " times before this log");
+			numFailedEnqueuesSinceLastLog.set(0);
 		}
 	}
 
@@ -33,7 +48,7 @@ public class EndpointSender {
 				}
 			}
 		});
-		thread.setName("EndpontSender_" + endpoint);
+		thread.setName("EndpointSender_" + endpoint);
 		thread.start();
 	}
 
