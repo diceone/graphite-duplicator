@@ -4,25 +4,35 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.Predicate;
 
-public class EndpointSender {
+public class TcpGraphiteEndpointSender {
 
 	private static final int LOG_FAILED_ENQUEUES_DELAY_SECONDS = 10;
 
-	private final Logger log = new Logger(EndpointSender.class);
+	private final Logger log = new Logger(TcpGraphiteEndpointSender.class);
 
 	private final BlockingQueue<String> queue = new ArrayBlockingQueue<>(250000);
 	private final Endpoint endpoint;
 	private long lastFailedEnqueueLog = System.nanoTime() - TimeUnit.SECONDS.toNanos(LOG_FAILED_ENQUEUES_DELAY_SECONDS);
 	private final AtomicLong numFailedEnqueuesSinceLastLog = new AtomicLong();
 
-	public EndpointSender(Endpoint endpoint) {
+	private Predicate<String> filter;
+
+	public TcpGraphiteEndpointSender(Endpoint endpoint, Predicate<String> filter) {
 		this.endpoint = endpoint;
+		this.filter = filter;
+	}
+
+	public TcpGraphiteEndpointSender(Endpoint endpoint) {
+		this(endpoint, x -> true);
 	}
 
 	public void enqueueMsg(String msg) {
-		if (!queue.offer(msg)) {
-			registerFailedEnqueue(msg);
+		if (filter.test(msg)) {
+			if (!queue.offer(msg)) {
+				registerFailedEnqueue(msg);
+			}
 		}
 	}
 
@@ -49,7 +59,7 @@ public class EndpointSender {
 				}
 			}
 		});
-		thread.setName("EndpointSender_" + endpoint);
+		thread.setName("TcpGraphiteEndpointSender_" + endpoint);
 		thread.start();
 	}
 

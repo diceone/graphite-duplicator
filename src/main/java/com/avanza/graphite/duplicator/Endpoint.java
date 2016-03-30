@@ -4,11 +4,16 @@ import java.net.InetSocketAddress;
 import java.util.Objects;
 
 public class Endpoint {
+	public enum Type {
+		INFLUX, GRAPHITE
+	}
 
 	private final String address;
 	private final int port;
+	private final Type type;
 
-	public Endpoint(String adress, int port) {
+	public Endpoint(String adress, int port, Type type) {
+		this.type = type;
 		this.address = Objects.requireNonNull(adress);
 		if (port < 0 || port > 65536) {
 			throw new IllegalArgumentException("Illegal port");
@@ -21,11 +26,12 @@ public class Endpoint {
 
 	public static Endpoint valueOf(String s) {
 		String[] split = s.split(":");
-		if (split.length != 2) {
+		if (split.length != 3) {
 			throw new IllegalArgumentException("String must be on format <address:port>");
 		}
 		int port = parsePort(split[1]);
-		return new Endpoint(split[0], port);
+		Type type = Type.valueOf(split[2].toUpperCase());
+		return new Endpoint(split[0], port, type);
 	}
 
 	private static int parsePort(String portString) {
@@ -48,9 +54,13 @@ public class Endpoint {
 		return port;
 	}
 
+	public Type getType() {
+		return type;
+	}
+
 	@Override
 	public String toString() {
-		return address + ":" + port;
+		return address + ":" + port + ":" + type;
 	}
 
 	@Override
