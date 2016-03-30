@@ -29,7 +29,7 @@ public class EndpointSender {
 	private void registerFailedEnqueue(String msg) {
 		numFailedEnqueuesSinceLastLog.incrementAndGet();
 		if (System.nanoTime() - lastFailedEnqueueLog > TimeUnit.SECONDS.toNanos(LOG_FAILED_ENQUEUES_DELAY_SECONDS)) {
-			log.warn("Failed to enqueue message: " + msg + " this message was repeated (for different msgs) "
+			log.warn("Endpoint " + endpoint + " - failed to enqueue message: " + msg + " this message was repeated (for different msgs) "
 					+ (numFailedEnqueuesSinceLastLog.get() - 1) + " times before this log");
 			numFailedEnqueuesSinceLastLog.set(0);
 		}
