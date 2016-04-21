@@ -8,8 +8,7 @@ import java.util.List;
 public class GraphiteDuplicator {
 	private final Logger log = new Logger(GraphiteDuplicator.class);
 
-	private static final String USAGE = "Usage: java -jar graphite-duplicator.jar <listenPort> <host:port:type> [<host:port:type> ...]\n" +
-	  "    where type is 'influx' or 'graphite'";
+	private static final String USAGE = "Usage: java -jar graphite-duplicator.jar <listenPort> <host:port> [<host:port> ...]";
 	private String[] args;
 
 	public static void main(String[] args) {
