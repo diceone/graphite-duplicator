@@ -19,8 +19,8 @@ graphite-duplicator listens for TCP connections and UDP packets on the same port
 
 ## Use Cases
 
-* Send your metrics to a hot standby instance
-* Setting up a new server? Send your metrics to both the new and old server until you are confident the new one works and has created all whisper files
+* Send your metrics to a hot standby instance.
+* Setting up a new server? Send your metrics to both the new and old server until you are confident the new one works and has created all whisper files.
 * Testing out a new backend that accepts metrics in Graphite format? Duplicate your metrics to the new backend to test it out.
 * ...
 
