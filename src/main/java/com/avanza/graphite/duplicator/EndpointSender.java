@@ -1,3 +1,27 @@
+/*
+ * Copyright (c) 2016 Avanza Bank
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ */
+
 package com.avanza.graphite.duplicator;
 
 import java.util.concurrent.ArrayBlockingQueue;
@@ -29,7 +53,8 @@ public class EndpointSender {
 	private void registerFailedEnqueue(String msg) {
 		numFailedEnqueuesSinceLastLog.incrementAndGet();
 		if (System.nanoTime() - lastFailedEnqueueLog > TimeUnit.SECONDS.toNanos(LOG_FAILED_ENQUEUES_DELAY_SECONDS)) {
-			log.warn("Endpoint " + endpoint + " - failed to enqueue message: '" + msg + "' this message was repeated (for different msgs) "
+			log.warn("Endpoint " + endpoint + " - failed to enqueue message: '" + msg
+					+ "' this message was repeated (for different msgs) "
 					+ (numFailedEnqueuesSinceLastLog.get() - 1) + " times before this log");
 			numFailedEnqueuesSinceLastLog.set(0);
 			lastFailedEnqueueLog = System.nanoTime();
@@ -57,6 +82,5 @@ public class EndpointSender {
 	public String toString() {
 		return endpoint.toString();
 	}
-	
-	
+
 }
